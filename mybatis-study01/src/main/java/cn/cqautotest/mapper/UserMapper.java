@@ -50,4 +50,12 @@ public interface UserMapper {
      * @return
      */
     List<User> findUsersByName(String userName);
+
+    /**
+     * 多条件查询
+     *
+     * @param user
+     * @return
+     */
+    List<User> queryUsers(User user);
 }

@@ -49,6 +49,14 @@ public class UserDaoTest {
     }
 
     @Test
+    public void queryUsers() {
+        // 执行方法
+        User user = new User(null, "李思思", null);
+        List<User> allUsers = mMapper.queryUsers(user);
+        System.out.println(allUsers);
+    }
+
+    @Test
     public void findUsersByName() {
         // 执行方法
         List<User> users = mMapper.findUsersByName("李");
