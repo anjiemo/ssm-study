@@ -1,6 +1,7 @@
 package cn.cqautotest.mapper;
 
 import cn.cqautotest.entity.User;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -58,4 +59,13 @@ public interface UserMapper {
      * @return
      */
     List<User> queryUsers(User user);
+
+
+    /**
+     * 多条件查询
+     *
+     * @param ids
+     * @return
+     */
+    List<User> queryUserByIds(@Param("ids") List<Integer> ids);
 }

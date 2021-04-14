@@ -2,21 +2,38 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="cn.cqautotest.mapper.UserMapper">
-    <select id="selectUserById" resultType="cn.cqautotest.entity.User">
-        select *
+    <resultMap id="userResultMap" type="cn.cqautotest.entity.User">
+        <id property="id" javaType="int" column="id" jdbcType="INTEGER"/>
+        <result property="userName" column="username"/>
+        <result property="password" column="password"/>
+    </resultMap>
+
+    <sql id="selectUser">
+        select id, username, password
         from user
+    </sql>
+
+    <select id="findAllUsers" parameterType="integer" resultType="user">
+        <include refid="selectUser"></include>
+    </select>
+
+    <select id="selectUserById" resultType="user">
+        <include refid="selectUser"></include>
         where id = #{id}
     </select>
 
-    <select id="findAllUsers" resultType="cn.cqautotest.entity.User">
-        select *
-        from user
+    <select id="queryUserByIds" resultType="user">
+        <include refid="selectUser"></include>
+        where id in
+        <foreach collection="ids" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
     </select>
 
-    <select id="queryUsers" resultType="cn.cqautotest.entity.User">
-        select id, username, password
-        from user
+    <select id="queryUsers" resultType="user">
+        <include refid="selectUser"></include>
         <where>
             <if test="id != null">
                 and id = #{id}
@@ -28,27 +45,70 @@
                 and password = #{password}
             </if>
         </where>
+
+        <!--<trim prefix="where" prefixOverrides="and">-->
+        <!--    <if test="id != null">-->
+        <!--        and id = #{id}-->
+        <!--    </if>-->
+        <!--    <if test="userName !=null and userName != ''">-->
+        <!--        and username = #{userName}-->
+        <!--    </if>-->
+        <!--    <if test="password !=null and password != ''">-->
+        <!--        and password = #{password}-->
+        <!--    </if>-->
+        <!--</trim>-->
+
+        <!--where 1 = 1-->
+        <!--<choose>-->
+        <!--    <when test="userName == '李思思'">-->
+        <!--        and username = #{userName}-->
+        <!--    </when>-->
+        <!--    <when test="password == '123456'">-->
+        <!--        and password = #{password}-->
+        <!--    </when>-->
+        <!--</choose>-->
     </select>
 
-    <select id="findUsersByName" resultType="cn.cqautotest.entity.User">
-        select *
-        from user
+    <select id="findUsersByName" resultType="user">
+        <include refid="selectUser"></include>
         where username like '%${userName}%'
     </select>
 
-    <insert id="saveUser" parameterType="cn.cqautotest.entity.User">
+    <insert id="saveUser" parameterType="user">
         insert into user (id, username, password)
         values (#{id}, #{userName}, #{password})
     </insert>
 
-    <update id="updateUser" parameterType="cn.cqautotest.entity.User">
+    <update id="updateUser" parameterType="user">
         update user
-        set username = #{userName},
-            password = #{password}
+        <set>
+            <if test="id != null">
+                id = #{id},
+            </if>
+            <if test="userName != null and userName != ''">
+                username = #{userName},
+            </if>
+            <if test="password != null and password != ''">
+                password = #{password},
+            </if>
+        </set>
+
+        <!--set-->
+        <!--<trim suffixOverrides=",">-->
+        <!--    <if test="id != null">-->
+        <!--        id = #{id},-->
+        <!--    </if>-->
+        <!--    <if test="userName != null and userName != ''">-->
+        <!--        username = #{userName},-->
+        <!--    </if>-->
+        <!--    <if test="password != null and password != ''">-->
+        <!--        password = #{password}-->
+        <!--    </if>-->
+        <!--</trim>-->
         where id = #{id}
     </update>
 
-    <delete id="deleteUserById" parameterType="cn.cqautotest.entity.User">
+    <delete id="deleteUserById" parameterType="user">
         delete
         user from user where id =
         #{id}
